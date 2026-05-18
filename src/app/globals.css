@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #003087;
+  --color-navy-dark: #00235f;
+  --color-navy-light: #1a4fa0;
+  --color-gold: #f5a623;
+  --color-gold-light: #ffca5e;
+  --color-deep: #080f1e;
+  --color-surface: #0c1a33;
+  --color-card: #101e3a;
+}
+
+body {
+  font-family: var(--font-dm-sans, 'DM Sans', sans-serif);
+  background: #080f1e;
+  color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-syne, 'Syne', sans-serif);
+}
+
+.font-display {
+  font-family: var(--font-syne, 'Montserrat', sans-serif);
+}
+
+/* ─── KEYFRAMES ─── */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gradientPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* ─── LOAD ANIMATIONS ─── */
+
+.anim-fade-up {
+  opacity: 0;
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── SCROLL REVEAL ─── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-36px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-up,
+  .reveal,
+  .reveal-left {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
