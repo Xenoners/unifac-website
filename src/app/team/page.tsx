@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import PageHeader from '@/components/PageHeader'
 import ScrollReveal from '@/components/ScrollReveal'
+import { getTeamMembers, urlFor } from '@/lib/sanity'
 
 export const metadata: Metadata = {
   title: 'Team – Unifac VZW',
@@ -43,10 +45,13 @@ function getInitials(name: string) {
     .toUpperCase()
 }
 
-export default function TeamPage() {
-  const grouped = roleOrder.reduce<Record<string, typeof team>>((acc, role) => {
-    const members = team.filter((m) => m.role === role)
-    if (members.length) acc[role] = members
+export default async function TeamPage() {
+  const sanityMembers = await getTeamMembers()
+  const members = sanityMembers?.length ? sanityMembers : team
+
+  const grouped = roleOrder.reduce<Record<string, typeof members>>((acc, role) => {
+    const roleMembers = members.filter((m) => m.role === role)
+    if (roleMembers.length) acc[role] = roleMembers
     return acc
   }, {})
 
@@ -74,9 +79,21 @@ export default function TeamPage() {
                       className="bg-surface border border-white/[0.06] rounded-2xl p-5 hover:border-white/12 hover:-translate-y-0.5 transition-all duration-300"
                       style={{ transitionDelay: `${i * 40}ms` }}
                     >
-                      <div className="w-10 h-10 rounded-xl bg-navy/60 border border-white/10 flex items-center justify-center mb-4">
-                        <span className="font-display font-bold text-gold text-sm">{getInitials(member.name)}</span>
-                      </div>
+                      {'photo' in member && member.photo ? (
+                        <div className="w-14 h-14 rounded-xl overflow-hidden mb-4 border border-white/10">
+                          <Image
+                            src={urlFor(member.photo).width(112).height(112).fit('crop').url()}
+                            alt={member.name}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-xl bg-navy/60 border border-white/10 flex items-center justify-center mb-4">
+                          <span className="font-display font-bold text-gold text-sm">{getInitials(member.name)}</span>
+                        </div>
+                      )}
                       <p className="font-display font-bold text-white text-sm leading-snug">{member.name}</p>
                       <p className="text-white/35 text-xs mt-1">{member.role}</p>
                     </div>

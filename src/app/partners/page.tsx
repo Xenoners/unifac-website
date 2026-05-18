@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import PageHeader from '@/components/PageHeader'
 import ScrollReveal from '@/components/ScrollReveal'
+import { getPartners, urlFor } from '@/lib/sanity'
 
 export const metadata: Metadata = {
   title: 'Partners – Unifac VZW',
@@ -52,7 +54,10 @@ const partners = [
   },
 ]
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const sanityPartners = await getPartners()
+  const data = sanityPartners?.length ? sanityPartners : partners
+
   return (
     <>
       <PageHeader
@@ -64,9 +69,23 @@ export default function PartnersPage() {
       <section className="py-24 px-6 bg-deep">
         <div className="max-w-5xl mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-20">
-            {partners.map((partner, i) => (
+            {data.map((partner, i) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const logo = (partner as any).logo ?? null
+              return (
               <ScrollReveal key={partner.name} delay={i * 70}>
                 <div className="bg-surface border border-white/[0.06] rounded-2xl p-7 hover:border-white/12 hover:-translate-y-0.5 transition-all duration-300 h-full flex flex-col">
+                  {logo && (
+                    <div className="h-12 mb-5 flex items-center">
+                      <Image
+                        src={urlFor(logo).height(48).url()}
+                        alt={partner.name}
+                        width={120}
+                        height={48}
+                        className="h-10 w-auto object-contain brightness-0 invert opacity-70"
+                      />
+                    </div>
+                  )}
                   <span className="text-[11px] font-semibold text-gold bg-gold/10 px-2.5 py-1 rounded-full self-start mb-5">
                     {partner.type}
                   </span>
@@ -74,7 +93,8 @@ export default function PartnersPage() {
                   <p className="text-white/40 text-sm leading-relaxed flex-1">{partner.description}</p>
                 </div>
               </ScrollReveal>
-            ))}
+              )
+            })}
           </div>
 
           {/* Become a partner */}
